@@ -1,0 +1,3 @@
+term.clear()
+--ccemux.attach("left", "wireless_modem") -- Ignore this ;)
+os.run({}, "/boot/kernel/luanix", {})

@@ -1,0 +1,154 @@
+--[[
+	Luanix init
+	---------------
+	Temporary init program, will move to a UI program soon.
+]]--
+local maxX,maxY = term.getSize()
+local btnx = math.floor(maxX/3)
+local space = math.floor((maxX-(btnx*3))/2)
+local event = {}
+local originalTerm, mainTerm
+originalTerm = term.current()
+mainTerm = window.create(originalTerm, 1, 1, maxX, maxY)
+
+-- Buttons
+local toolBar, backButton, homeButton, taskListBtn
+local backbtnstr = "<-"
+local homebtnstr = "[]"
+local taskbtnstr = "|||"
+--[[
+local background = paintutils.loadImage("/etc/init/background.nfp")
+if not background then
+	printError("background not found")
+	while true do
+		sleep(0.1)
+	end
+end
+]]--
+
+function main()
+	toolbar = window.create(mainTerm, 1, maxY, maxX, 1)
+	local x, y
+	backButton = {}
+	backButton.window = window.create(toolbar, 1, 1, btnx, 1)
+	function backButton.click()
+		local x, y = backButton.window.getSize()
+		backButton.window.setCursorPos(math.floor(x/2),1)
+		backButton.window.setBackgroundColor(colors.white)
+		backButton.window.setTextColor(colors.black)
+		backButton.window.clear()
+		backButton.window.write(backbtnstr)
+		sleep(0.125)
+		backButton.window.setCursorPos(math.floor(x/2),1)
+		backButton.window.setBackgroundColor(colors.black)
+		backButton.window.setTextColor(colors.white)
+		backButton.window.clear()
+		backButton.window.write(backbtnstr)
+	end
+	homeButton = {}
+	homeButton.window = window.create(toolbar, btnx+space+1, 1, btnx, 1)
+	function homeButton.click()
+		local x, y = homeButton.window.getSize()
+		homeButton.window.setCursorPos(math.floor(x/2),1)
+		homeButton.window.setBackgroundColor(colors.white)
+		homeButton.window.setTextColor(colors.black)
+		homeButton.window.clear()
+		homeButton.window.write(homebtnstr)
+		sleep(0.125)
+		homeButton.window.setCursorPos(math.floor(x/2),1)
+		homeButton.window.setBackgroundColor(colors.black)
+		homeButton.window.setTextColor(colors.white)
+		homeButton.window.clear()
+		homeButton.window.write(homebtnstr)
+	end
+	taskListBtn = {}
+	taskListBtn.window = window.create(toolbar, (btnx*2)+(space*2)+1, 1, btnx, 1)
+	function taskListBtn.click()
+		local x, y = taskListBtn.window.getSize()
+		taskListBtn.window.setCursorPos(math.floor(x/2),1)
+		taskListBtn.window.setBackgroundColor(colors.white)
+		taskListBtn.window.setTextColor(colors.black)
+		taskListBtn.window.clear()
+		taskListBtn.window.write(taskbtnstr)
+		sleep(0.125)
+		taskListBtn.window.setCursorPos(math.floor(x/2),1)
+		taskListBtn.window.setBackgroundColor(colors.black)
+		taskListBtn.window.setTextColor(colors.white)
+		taskListBtn.window.clear()
+		taskListBtn.window.write(taskbtnstr)
+	end
+	while true do
+		redrawScreen()
+		event = {os.pullEventRaw()}
+		if event[1] == "mouse_click" then
+			local btn, x, y = event[2], event[3], event[4]
+			if btn == 1 and x >= 1 and x <= btnx and y == maxY then
+				-- Back button
+				backButton.click()
+			elseif btn == 1 and x >= btnx+space+1 and x <= (btnx*2)+space and y == maxY then
+				-- Home button
+				homeButton.click()
+				break
+			elseif btn == 1 and x >= (btnx*2)+(space*2)+1 and x <= maxX and y == maxY then
+				-- Task button
+				taskListBtn.click()
+			end
+		end
+		sleep(0.01)
+	end
+end
+
+local function redrawToolbar()
+	toolbar.setBackgroundColor(colors.black)
+	toolbar.setTextColor(colors.white)
+	toolbar.clear()
+end
+
+local function redrawBackbtn()
+	x, y = backButton.window.getSize()
+	backButton.window.setCursorPos(math.floor(x/2),1)
+	backButton.window.setBackgroundColor(colors.black)
+	backButton.window.setTextColor(colors.white)
+	backButton.window.clear()
+	backButton.window.write(backbtnstr)
+end
+
+local function redrawHomebtn()
+	x, y = homeButton.window.getSize()
+	homeButton.window.setCursorPos(math.floor(x/2),1)
+	homeButton.window.setBackgroundColor(colors.black)
+	homeButton.window.setTextColor(colors.white)
+	homeButton.window.clear()
+	homeButton.window.write(homebtnstr)
+end
+
+local function redrawTaskbtn()
+	x, y = taskListBtn.window.getSize()
+	taskListBtn.window.setCursorPos(math.floor(x/2),1)
+	taskListBtn.window.setBackgroundColor(colors.black)
+	taskListBtn.window.setTextColor(colors.white)
+	taskListBtn.window.clear()
+	taskListBtn.window.write(taskbtnstr)
+end
+
+function redrawScreen()
+	term.setCursorPos(1,1)
+	term.setBackgroundColor(colors.gray)
+	term.clear()
+	--paintutils.drawImage(background, 1,1)
+	redrawToolbar() -- The big black line
+	redrawBackbtn() -- SLIIIDE TO THE LEFT
+	redrawHomebtn() -- middel
+	redrawTaskbtn() -- SLIIIDE TO THE RIGHT
+	-- CRISS CROSS
+end
+
+main()
+originalTerm, mainTerm, toolBar, backButton, homeButton, taskListBtn = nil, nil, nil, nil, nil, nil
+term.setCursorPos(1,1)
+term.setBackgroundColor(colors.cyan)
+term.clear()
+print("Thank you for using luanix.")
+print("I thank you for downloading this in the first place.")
+sleep(2)
+os.reboot()
